@@ -11,7 +11,7 @@
 
 <div id="menu-fondo" class="fixed inset-0 z-30 hidden bg-titulo/50 md:hidden"></div>
 
-<aside id="menu" class="fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 -translate-x-full flex-col overflow-y-auto bg-texto px-6 py-8 text-white transition-transform duration-200 md:static md:translate-x-0">
+<aside id="menu" class="fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 -translate-x-full flex-col overflow-y-auto bg-texto px-6 py-8 text-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0">
     <button type="button" id="menu-cerrar" aria-label="Cerrar menú" class="absolute right-3 top-3 rounded-lg p-2 text-white transition-colors hover:bg-white/10 md:hidden">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -28,7 +28,7 @@
         <span class="mt-2 text-xs font-semibold uppercase tracking-widest text-borde">Mi perfil</span>
     </a>
 
-    <nav class="mt-10 flex flex-col gap-1">
+    <nav class="mt-6 flex flex-col gap-1 border-t-2 border-white/30 pt-6">
         <?php
         $activo = isset($activo) ? $activo : '';
 
@@ -48,7 +48,7 @@
         <a href="#" class="rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Funcionarios</a>
     </nav>
 
-    <div class="mt-6 border-t border-white/10 pt-6">
+    <div class="mt-6 border-t-2 border-white/30 pt-6">
         <a href="<?= site_url('login/salir') ?>" class="block rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Cerrar sesión</a>
     </div>
 </aside>

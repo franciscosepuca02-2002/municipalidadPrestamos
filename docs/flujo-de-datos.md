@@ -169,7 +169,7 @@ prestado ──► devuelto   (al registrar una recepción)
 abierto  → todos sus items siguen en 'prestado'
 parcial  → algunos devueltos/hurtados, y al menos uno en 'prestado'
 cerrado  → ninguno en 'prestado'
-anulado  → lo anuló el administrador (solo si no tenía devoluciones)
+anulado  → lo anuló el administrador (solo se puede desde 'abierto')
 ```
 
 Esa regla la calcula el modelo en la misma operación en que cambia un item. Es el punto donde más fácil se descuadran los datos, así que conviene que viva en **un solo método**, algo como `Prestamo_model->recalcular_estado($id_prestamo)`, y que nadie más escriba esa columna.
@@ -210,4 +210,14 @@ Filtrando por `funcionarios.id` se obtiene "todo lo que tiene Juan". Filtrando p
 
 ## El caso aparte: anular
 
-Solo el administrador, y solo si el préstamo **no tiene ninguna fila en `recepcion_items`**. Se cambia `prestamos.estado='anulado'` y se escribe el log. No se borra nada: ni el acta, ni los items, ni los archivos. Si ya hubo devoluciones, no se anula — se registra una recepción normal por lo que quede.
+Solo el administrador, y **solo si el préstamo está en `abierto`**. Se cambia `prestamos.estado='anulado'` y se escribe el log. No se borra nada: ni el acta, ni los items, ni los archivos.
+
+La condición es el estado, no las devoluciones: apenas el préstamo pasa a `parcial` deja de poder anularse, y pasa a `parcial` tanto al devolver un item como **al marcar uno como hurtado**. Si ya se movió algo, no se anula — se registra una recepción normal por lo que quede.
+
+En el código es una sola comprobación:
+
+```php
+if ($prestamo['estado'] !== 'abierto') {
+    // no se puede anular
+}
+```

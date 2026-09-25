@@ -37,7 +37,7 @@
                         <h2 class="text-3xl font-bold text-titulo">Iniciar sesión</h2>
                     </div>
 
-                    <form action="<?= site_url('login') ?>" method="post" class="mt-10 space-y-6">
+                    <?= form_open('login', array('class' => 'mt-10 space-y-6')) ?>
                         <div>
                             <label for="email" class="block text-sm font-medium text-titulo">Correo electrónico</label>
                             <input type="email" id="email" name="email" placeholder="nombre@correo.cl" autocomplete="email" required

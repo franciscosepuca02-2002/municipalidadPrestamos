@@ -59,4 +59,28 @@ class Usuario_model extends CI_Model
             ->where('rol', 'encargado')
             ->update('usuarios', array('is_active' => $activo));
     }
+
+    public function obtener_perfil($id)
+    {
+        return $this->db->select('id, nombres, apellidos, email, rol, is_active, created_at')
+            ->where('id', $id)
+            ->get('usuarios')
+            ->row_array();
+    }
+
+    public function password_correcta($id, $clave)
+    {
+        $fila = $this->db->select('password')
+            ->where('id', $id)
+            ->get('usuarios')
+            ->row_array();
+
+        return $fila !== NULL && password_verify($clave, $fila['password']);
+    }
+
+    public function cambiar_password($id, $clave)
+    {
+        return $this->db->where('id', $id)
+            ->update('usuarios', array('password' => password_hash($clave, PASSWORD_DEFAULT)));
+    }
 }

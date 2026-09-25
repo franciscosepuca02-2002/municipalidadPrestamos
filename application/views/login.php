@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var string $error
+ */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -37,11 +42,16 @@
                         <h2 class="text-3xl font-bold text-titulo">Iniciar sesión</h2>
                     </div>
 
-                    <?= form_open('login', array('class' => 'mt-10 space-y-6')) ?>
+                    <?php if (isset($error)) : ?>
+                        <div role="alert" class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><?= html_escape($error) ?></div>
+                    <?php endif; ?>
+
+                    <?= form_open('login/validar', array('class' => 'mt-10 space-y-6')) ?>
                         <div>
                             <label for="email" class="block text-sm font-medium text-titulo">Correo electrónico</label>
-                            <input type="email" id="email" name="email" placeholder="nombre@correo.cl" autocomplete="email" required
+                            <input type="email" id="email" name="email" value="<?= set_value('email') ?>" placeholder="nombre@correo.cl" autocomplete="email" required
                                 class="mt-2 w-full rounded-lg border border-borde bg-fondo focus:bg-white px-4 py-3 text-base text-titulo placeholder:text-texto/40 focus:border-boton focus:outline-none focus:ring-2 focus:ring-suave">
+                            <?= form_error('email', '<p class="mt-1.5 text-sm text-red-600">', '</p>') ?>
                         </div>
 
                         <div>
@@ -51,6 +61,7 @@
                             </div>
                             <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required
                                 class="mt-2 w-full rounded-lg border border-borde bg-fondo focus:bg-white px-4 py-3 text-base text-titulo placeholder:text-texto/40 focus:border-boton focus:outline-none focus:ring-2 focus:ring-suave">
+                            <?= form_error('password', '<p class="mt-1.5 text-sm text-red-600">', '</p>') ?>
                         </div>
 
                         <button type="submit" class="w-full rounded-lg bg-boton py-3 text-base font-semibold text-white transition-colors hover:bg-hover focus:outline-none focus:ring-2 focus:ring-borde">

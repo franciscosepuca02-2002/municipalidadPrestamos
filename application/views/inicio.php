@@ -1,3 +1,12 @@
+<?php
+
+/**
+ * @var string $nombres
+ * @var string $apellidos
+ * @var string $rol
+ * @var string $fecha
+ */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -25,8 +34,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                     </svg>
                 </div>
-                <p class="mt-4 font-semibold">Nombre Apellido</p>
-                <p class="text-sm text-borde">Administrador</p>
+                <p class="mt-4 font-semibold"><?= html_escape($nombres . ' ' . $apellidos) ?></p>
+                <p class="text-sm text-borde"><?= html_escape(ucfirst($rol)) ?></p>
             </div>
 
             <nav class="mt-10 flex flex-col gap-1">
@@ -39,7 +48,7 @@
             </nav>
 
             <div class="mt-6 border-t border-white/10 pt-6">
-                <a href="<?= site_url('login') ?>" class="block rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Cerrar sesión</a>
+                <a href="<?= site_url('login/salir') ?>" class="block rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Cerrar sesión</a>
             </div>
         </aside>
 
@@ -61,8 +70,8 @@
                         <img src="<?= base_url('assets/img/MuniLinares.jpg') ?>" alt="" class="absolute inset-0 h-full w-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-r from-titulo via-titulo/80 to-titulo/50 sm:to-titulo/20"></div>
                         <div class="relative flex h-full flex-col justify-center px-6 text-white sm:px-10">
-                            <p class="text-sm font-semibold uppercase tracking-widest text-borde">Jueves 24 de septiembre</p>
-                            <h2 class="mt-2 text-3xl font-bold sm:text-4xl">Hola, Alejandro</h2>
+                            <p class="text-sm font-semibold uppercase tracking-widest text-borde"><?= html_escape($fecha) ?></p>
+                            <h2 class="mt-2 text-3xl font-bold sm:text-4xl">Hola, <?= html_escape($nombres) ?></h2>
                             <p class="mt-3 max-w-md text-base text-borde sm:text-lg">Registra y sigue los préstamos de equipos informáticos.</p>
                         </div>
                     </section>

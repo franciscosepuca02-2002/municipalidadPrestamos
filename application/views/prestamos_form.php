@@ -11,7 +11,9 @@
 $input = 'w-full rounded-lg border border-borde bg-white px-4 py-2.5 text-texto placeholder:text-texto/40 focus:border-boton focus:outline-none focus:ring-2 focus:ring-boton/30';
 $label = 'mb-1.5 block text-sm font-semibold text-titulo';
 $th    = 'px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-titulo';
-$td    = 'px-4 py-3 align-middle';
+$tr     = 'mb-4 block rounded-xl border border-borde p-4 md:mb-0 md:table-row md:rounded-none md:border-0 md:p-0';
+$td     = 'flex items-center justify-between gap-3 border-b border-borde/50 py-2.5 md:table-cell md:border-0 md:px-4 md:py-3';
+$rotulo = 'shrink-0 text-xs font-bold uppercase tracking-wide text-titulo md:hidden';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -22,8 +24,7 @@ $td    = 'px-4 py-3 align-middle';
     <title>Nuevo préstamo · Préstamos</title>
     <link rel="stylesheet" href="<?= base_url('assets/css/output.css') ?>">
     <script src="<?= base_url('assets/js/menu.js') ?>" defer></script>
-    <!-- Se activa en el paso del JavaScript -->
-    <!-- <script src="<?= base_url('assets/js/prestamo.js') ?>" defer></script> -->
+    <script src="<?= base_url('assets/js/prestamo.js') ?>" defer></script>
 </head>
 
 <body class="min-h-screen bg-fondo text-texto antialiased">
@@ -36,7 +37,11 @@ $td    = 'px-4 py-3 align-middle';
             <main class="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
                 <div class="mx-auto max-w-5xl">
 
-                    <?= form_open('prestamos/guardar') ?>
+                    <?= form_open('prestamos/guardar', array(
+                        'id'                   => 'form-prestamo',
+                        'data-url-funcionario' => site_url('prestamos/buscar_funcionario'),
+                        'data-url-item'        => site_url('prestamos/buscar_item'),
+                    )) ?>
 
                     <div class="rounded-2xl border border-borde bg-white p-6 shadow-xl shadow-titulo/10 sm:p-8 lg:p-10">
 
@@ -73,14 +78,6 @@ $td    = 'px-4 py-3 align-middle';
                             </div>
 
                             <div>
-                                <label for="tratamiento" class="<?= $label ?>">Tratamiento</label>
-                                <select name="tratamiento" id="tratamiento" class="<?= $input ?>">
-                                    <option value="Sr." <?= set_select('tratamiento', 'Sr.', TRUE) ?>>Sr.</option>
-                                    <option value="Sra." <?= set_select('tratamiento', 'Sra.') ?>>Sra.</option>
-                                </select>
-                            </div>
-
-                            <div>
                                 <label for="nombres" class="<?= $label ?>">Nombres</label>
                                 <input type="text" name="nombres" id="nombres" value="<?= set_value('nombres') ?>" class="<?= $input ?>">
                             </div>
@@ -90,16 +87,16 @@ $td    = 'px-4 py-3 align-middle';
                                 <input type="text" name="apellidos" id="apellidos" value="<?= set_value('apellidos') ?>" class="<?= $input ?>">
                             </div>
 
-                            <div class="sm:col-span-2 lg:col-span-3">
+                            <div>
                                 <label for="cargo_departamento" class="<?= $label ?>">Cargo / Departamento</label>
                                 <input type="text" name="cargo_departamento" id="cargo_departamento" value="<?= set_value('cargo_departamento') ?>" class="<?= $input ?>">
                             </div>
-
-                            <div>
-                                <label for="fecha" class="<?= $label ?>">Fecha del acta</label>
-                                <input type="date" name="fecha" id="fecha" value="<?= set_value('fecha', date('Y-m-d')) ?>" class="<?= $input ?>">
-                            </div>
                         </div>
+
+                        <p class="mt-4 text-sm text-texto/70">
+                            El acta se emitirá con fecha <span class="font-semibold text-titulo"><?= fecha_en_palabras() ?></span>.
+                        </p>
+                        <p id="aviso-funcionario" class="mt-3 hidden text-sm"></p>
 
                         <!-- ============ 2. EQUIPOS ============ -->
                         <div class="mt-10 flex items-center gap-4">
@@ -117,13 +114,17 @@ $td    = 'px-4 py-3 align-middle';
                                     class="shrink-0 rounded-lg bg-boton px-6 py-2.5 font-semibold text-white transition-colors hover:bg-hover">
                                     + Agregar equipo
                                 </button>
+                                <button type="button" id="agregar-manual"
+                                    class="shrink-0 rounded-lg border border-boton px-6 py-2.5 font-semibold text-boton transition-colors hover:bg-suave">
+                                    Ingresar manualmente
+                                </button>
                             </div>
-                            <p class="mt-2 text-xs text-texto/60">Si el equipo no está registrado, se crea con los datos que escribas en la fila.</p>
+                            <p id="aviso-item" class="mt-2 text-xs text-texto/60">Busca el equipo por cualquiera de sus identificadores. Si no está registrado o no tiene ninguno, ingrésalo manualmente.</p>
                         </div>
 
-                        <div class="mt-5 overflow-x-auto rounded-xl border border-borde">
-                            <table class="w-full min-w-[56rem] border-collapse text-sm">
-                                <thead class="bg-suave">
+                        <div class="mt-5 md:overflow-x-auto md:rounded-xl md:border md:border-borde">
+                            <table class="block w-full border-collapse text-sm md:table md:min-w-[56rem]">
+                                <thead class="hidden bg-suave md:table-header-group">
                                     <tr>
                                         <th class="<?= $th ?>">N° Inventario</th>
                                         <th class="<?= $th ?>">Marca</th>
@@ -134,46 +135,11 @@ $td    = 'px-4 py-3 align-middle';
                                         <th class="<?= $th ?> text-center">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tabla-items" class="divide-y divide-borde">
-
-                                    <!-- FILAS DE EJEMPLO: las borras cuando entre el JavaScript -->
-                                    <tr>
-                                        <td class="<?= $td ?> font-semibold text-titulo">
-                                            <input type="hidden" name="items[0][id_item]" value="11">
-                                            INV-2026-041
-                                        </td>
-                                        <td class="<?= $td ?>">Lenovo</td>
-                                        <td class="<?= $td ?>">ThinkPad T14s G4</td>
-                                        <td class="<?= $td ?>">PF4892LK-91</td>
-                                        <td class="<?= $td ?>">00:1A:2B:3C:4D:5E</td>
-                                        <td class="<?= $td ?>">
-                                            <input type="text" name="items[0][observacion]" placeholder="Cargador, funda…" class="<?= $input ?> py-1.5 text-sm">
-                                        </td>
-                                        <td class="<?= $td ?> text-center">
-                                            <button type="button" class="quitar-item rounded-lg bg-red-50 px-3 py-1.5 font-bold text-red-600 transition-colors hover:bg-red-100" aria-label="Quitar equipo">&times;</button>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="<?= $td ?> font-semibold text-titulo">
-                                            <input type="hidden" name="items[1][id_item]" value="12">
-                                            INV-2026-088
-                                        </td>
-                                        <td class="<?= $td ?>">Samsung</td>
-                                        <td class="<?= $td ?>">Galaxy S23 FE</td>
-                                        <td class="<?= $td ?>">R58M3490XW2</td>
-                                        <td class="<?= $td ?>">358901234567</td>
-                                        <td class="<?= $td ?>">
-                                            <input type="text" name="items[1][observacion]" placeholder="Cargador, funda…" class="<?= $input ?> py-1.5 text-sm">
-                                        </td>
-                                        <td class="<?= $td ?> text-center">
-                                            <button type="button" class="quitar-item rounded-lg bg-red-50 px-3 py-1.5 font-bold text-red-600 transition-colors hover:bg-red-100" aria-label="Quitar equipo">&times;</button>
-                                        </td>
-                                    </tr>
-
+                                <tbody id="tabla-items" class="block md:table-row-group md:divide-y md:divide-borde">
                                     <tr id="fila-vacia" class="hidden">
                                         <td colspan="7" class="px-4 py-10 text-center text-texto/50">Todavía no has agregado equipos.</td>
                                     </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -207,20 +173,79 @@ $td    = 'px-4 py-3 align-middle';
 
     <!-- Plantilla para las filas que agregue el JavaScript. No se renderiza. -->
     <template id="plantilla-item">
-        <tr>
-            <td class="<?= $td ?> font-semibold text-titulo">
-                <input type="hidden" name="items[__i__][id_item]" data-campo="id_item">
-                <span data-campo="numero_inventario"></span>
-            </td>
-            <td class="<?= $td ?>" data-campo="marca"></td>
-            <td class="<?= $td ?>" data-campo="modelo"></td>
-            <td class="<?= $td ?>" data-campo="sn"></td>
-            <td class="<?= $td ?>" data-campo="mac_imei"></td>
+        <tr class="<?= $tr ?>">
             <td class="<?= $td ?>">
-                <input type="text" name="items[__i__][observacion]" placeholder="Cargador, funda…" class="<?= $input ?> py-1.5 text-sm">
+                <span class="<?= $rotulo ?>">N° Inventario</span>
+                <input type="hidden" name="items[__i__][id_item]" data-campo="id_item">
+                <span class="font-semibold text-titulo" data-campo="numero_inventario"></span>
             </td>
-            <td class="<?= $td ?> text-center">
-                <button type="button" class="quitar-item rounded-lg bg-red-50 px-3 py-1.5 font-bold text-red-600 transition-colors hover:bg-red-100" aria-label="Quitar equipo">&times;</button>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Marca</span>
+                <span data-campo="marca"></span>
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Modelo</span>
+                <span data-campo="modelo"></span>
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">N° Serie</span>
+                <span data-campo="sn"></span>
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">MAC / IMEI</span>
+                <span data-campo="mac_imei"></span>
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Observaciones</span>
+                <input type="text" name="items[__i__][observacion]" placeholder="Cargador, funda…"
+                    class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="block pt-3 md:table-cell md:px-4 md:py-3 md:text-center">
+                <button type="button"
+                    class="quitar-item w-full rounded-lg bg-red-50 px-3 py-2 font-semibold text-red-600 transition-colors hover:bg-red-100 md:w-auto md:py-1.5 md:font-bold">
+                    <span class="md:hidden">Quitar equipo</span>
+                    <span class="hidden md:inline">&times;</span>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <!-- Fila para un equipo que todavía no existe en la base -->
+    <template id="plantilla-item-nuevo">
+        <tr class="<?= $tr ?> border-boton/40 md:bg-suave/30" data-nuevo="1">
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">N° Inventario</span>
+                <input type="hidden" name="items[__i__][id_item]" value="">
+                <input type="text" name="items[__i__][numero_inventario]" placeholder="INV-…"
+                    class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Marca</span>
+                <input type="text" name="items[__i__][marca]" class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Modelo</span>
+                <input type="text" name="items[__i__][modelo]" class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">N° Serie</span>
+                <input type="text" name="items[__i__][sn]" class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">MAC / IMEI</span>
+                <input type="text" name="items[__i__][mac_imei]" class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="<?= $td ?>">
+                <span class="<?= $rotulo ?>">Observaciones</span>
+                <input type="text" name="items[__i__][observacion]" placeholder="Cargador, funda…"
+                    class="<?= $input ?> flex-1 py-1.5 text-sm md:w-full">
+            </td>
+            <td class="block pt-3 md:table-cell md:px-4 md:py-3 md:text-center">
+                <button type="button"
+                    class="quitar-item w-full rounded-lg bg-red-50 px-3 py-2 font-semibold text-red-600 transition-colors hover:bg-red-100 md:w-auto md:py-1.5 md:font-bold">
+                    <span class="md:hidden">Quitar equipo</span>
+                    <span class="hidden md:inline">&times;</span>
+                </button>
             </td>
         </tr>
     </template>

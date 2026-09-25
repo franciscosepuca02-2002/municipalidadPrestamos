@@ -40,7 +40,9 @@
         <a href="<?= site_url('inicio') ?>" class="<?= $clase('inicio') ?>">Inicio</a>
         <a href="<?= site_url('prestamos') ?>" class="<?= $clase('prestamos') ?>">Préstamos</a>
         <a href="#" class="rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Equipos</a>
-        <a href="#" class="rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Usuarios</a>
+        <?php if (es_admin()) : ?>
+            <a href="<?= site_url('usuarios') ?>" class="<?= $clase('usuarios') ?>">Usuarios</a>
+        <?php endif; ?>
         <a href="#" class="rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Logs</a>
         <a href="#" class="rounded-lg px-4 py-3 font-medium text-white transition-colors hover:bg-white/10">Funcionarios</a>
     </nav>

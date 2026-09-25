@@ -13,4 +13,50 @@ class Usuario_model extends CI_Model
             ->get('usuarios')
             ->row_array();
     }
+
+    public function listar()
+    {
+        return $this->db->select('id, nombres, apellidos, email, rol, is_active, created_at')
+            ->order_by('apellidos', 'ASC')
+            ->order_by('nombres', 'ASC')
+            ->get('usuarios')
+            ->result_array();
+    }
+
+    public function obtener($id)
+    {
+        return $this->db->select('id, nombres, apellidos, email, rol, is_active')
+            ->where('id', $id)
+            ->where('rol', 'encargado')
+            ->get('usuarios')
+            ->row_array();
+    }
+
+    public function email_en_uso($email, $id_excluir = NULL)
+    {
+        $this->db->where('email', $email);
+
+        if ($id_excluir !== NULL) {
+            $this->db->where('id !=', $id_excluir);
+        }
+
+        return $this->db->count_all_results('usuarios') > 0;
+    }
+
+    public function crear($datos)
+    {
+        return $this->db->insert('usuarios', $datos);
+    }
+
+    public function actualizar($id, $datos)
+    {
+        return $this->db->where('id', $id)->where('rol', 'encargado')->update('usuarios', $datos);
+    }
+
+    public function cambiar_estado($id, $activo)
+    {
+        return $this->db->where('id', $id)
+            ->where('rol', 'encargado')
+            ->update('usuarios', array('is_active' => $activo));
+    }
 }

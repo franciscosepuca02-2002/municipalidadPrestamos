@@ -36,3 +36,13 @@ node_modules/
 
 ## CSS
 assets/css/output.css
+
+
+## Uploads
+
+uploads/generados/*
+!uploads/generados/index.html
+uploads/escaneados/*
+!uploads/escaneados/index.html
+uploads/denuncias/*
+!uploads/denuncias/index.html

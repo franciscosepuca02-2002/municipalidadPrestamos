@@ -38,6 +38,16 @@
 
 /*
  *---------------------------------------------------------------
+ * ZONA HORARIA
+ *---------------------------------------------------------------
+ *
+ * Se fija aquí y no en el php.ini para no depender de la
+ * configuración del servidor.
+ */
+date_default_timezone_set('America/Santiago');
+
+/*
+ *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
  *---------------------------------------------------------------
  *
